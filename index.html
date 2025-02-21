@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Speed Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #43a047 0%, #1b5e20 100%);
+        }
+
+        .speed-test-container {
+            text-align: center;
+            background: rgba(188, 139, 252, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .test-phase {
+            font-size: 1.2rem;
+            color: #0d8313;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .speedometer {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+        }
+
+        .speed-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .speed-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #0a380c;
+        }
+
+        .unit {
+            font-size: 1.2rem;
+            color: #381a1a;
+        }
+
+        .timer {
+            font-size: 1.1rem;
+            color: #301b1b;
+            margin-top: 5px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background: #43a047;
+            color: rgb(101, 253, 241);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        button:disabled {
+            background: #e97dff;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-details {
+            margin-top: 20px;
+            color: #444;
+            background: #29c7ee;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .result-details p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #43a047, #2e7d32);
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .phase-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .result-value {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="speed-test-container">
+        <div class="speedtest-header">
+            <h1>Internet Speed Test</h1>
+            <div class="network-info">
+                <div class="provider-info">
+                    <span>Network Provider:</span>
+                    <span id="networkProvider">Detecting...</span>
+                </div>
+                <div class="connection-info">
+                    <span>Connection Type:</span>
+                    <span id="connectionType">Detecting...</span>
+                </div>
+            </div>
+        </div>
+        <div class="test-phase" id="testPhase">Ready to Test</div>
+        <div class="speedometer">
+            <canvas id="speedometer" width="300" height="300"></canvas>
+            <div class="speed-display">
+                <div class="speed-value" id="speed">0</div>
+                <div class="unit">Mbps</div>
+                <div class="timer" id="timer"></div>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progressBar" class="progress"></div>
+            </div>
+            <div class="phase-indicator">
+                <span>Ping</span>
+                <span>Download</span>
+                <span>Upload</span>
+            </div>
+        </div>
+        <button id="startTest">Start Test</button>
+        <div class="result-details">
+            <p>Download Speed: <span id="downloadSpeed" class="result-value">0 Mbps</span></p>
+            <p>Upload Speed: <span id="uploadSpeed" class="result-value">0 Mbps</span></p>
+            <p>Ping: <span id="ping" class="result-value">0 ms</span></p>
+        </div>
+    </div>
+    <script src="speedtest.js"></script>
+    <script>
+        class NetworkSpeedTest {
+            async measureSpeed() {
+                const startTime = performance.now();
+                const fileSize = 5 * 1024 * 1024; // 5MB test file
+                
+                try {
+                    const response = await fetch('path/to/test/file');
+                    const reader = response.body.getReader();
+                    let receivedLength = 0;
+
+                    while(true) {
+                        const {done, value} = await reader.read();
+                        if (done) break;
+                        receivedLength += value.length;
+                    }
+
+                    const endTime = performance.now();
+                    const durationInSeconds = (endTime - startTime) / 1000;
+                    const speedInMbps = (receivedLength * 8) / (1000000 * durationInSeconds);
+
+                    return speedInMbps;
+                } catch (error) {
+                    console.error('Speed test failed:', error);
+                    return 0;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
